@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WF Casual Store</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--primary:#111;--accent:#ff5722;--bg:#f5f5f5;--white:#fff;--shadow:0 4px 12px rgba(0,0,0,0.08)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{background:var(--bg);color:#333;padding-bottom:70px}
+header{position:sticky;top:0;background:var(--white);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);z-index:1000}
+header h2{font-size:18px}
+.header-icons{display:flex;gap:15px;align-items:center}
+.icon-btn{position:relative;font-size:20px;cursor:pointer;color:#111}
+.cart-count{position:absolute;top:-5px;right:-8px;background:var(--accent);color:#fff;font-size:10px;padding:2px 5px;border-radius:50%}
+.banner img{width:100%;border-radius:0 0 12px 12px}
+.categories,.products{padding:15px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.category-card,.product-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);transition:.3s}
+.category-card{padding:20px;text-align:center;cursor:pointer}
+.category-card:hover{transform:translateY(-5px)}
+.category-card i{font-size:28px;margin-bottom:8px;color:var(--accent)}
+.product-card{overflow:hidden;position:relative}
+.product-card img{width:100%;height:160px;object-fit:cover}
+.product-info{padding:10px}
+.product-info h4{font-size:14px;margin-bottom:5px}
+.product-info p{font-weight:bold;color:var(--accent);margin-bottom:8px}
+.add-btn{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer}
+.badge{position:absolute;top:8px;left:8px;background:red;color:#fff;font-size:10px;padding:3px 6px;border-radius:4px}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;justify-content:space-around;padding:8px 0;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
+.bottom-nav div{text-align:center;font-size:12px;cursor:pointer}
+.bottom-nav i{font-size:18px;display:block}
+.section{display:none}
+.active{display:block}
+input,textarea{width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc}
+.qty-control{display:flex;align-items:center;gap:8px}
+.qty-control button{padding:4px 8px}
+</style>
+</head>
+<body>
+<header>
+<h2>WF Casual Store</h2>
+<div class="header-icons">
+<a href="tel:08263024434" class="icon-btn"><i class="fa fa-phone"></i></a>
+<a href="https://wa.me/918263024434" class="icon-btn"><i class="fab fa-whatsapp"></i></a>
+<div class="icon-btn" onclick="openCart()"><i class="fa fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+</div>
+</header>
+
+<div id="home" class="section active">
+<div class="banner"><img src="images/banner.jpg" loading="lazy"></div>
+<div class="categories">
+<div class="category-card" onclick="openCategory('shirts')"><i class="fa fa-shirt"></i><div>Shirts</div></div>
+<div class="category-card" onclick="openCategory('pants')"><i class="fa fa-user"></i><div>Pants</div></div>
+<div class="category-card" onclick="openCategory('tshirts')"><i class="fa fa-shirt"></i><div>T-Shirts</div></div>
+<div class="category-card" onclick="openCategory('jeans')"><i class="fa fa-user"></i><div>Jeans</div></div>
+</div>
+</div>
+
+<div id="categoryPage" class="section"><div class="products" id="productContainer"></div></div>
+
+<div id="cartPage" class="section">
+<div style="padding:15px">
+<h3>Your Cart</h3>
+<div id="cartItems"></div>
+<h3 id="totalPrice"></h3>
+<button class="add-btn" onclick="goToCheckout()">Checkout</button>
+</div>
+</div>
+
+<div id="checkoutPage" class="section">
+<div style="padding:15px">
+<h3>Checkout</h3>
+<input type="text" id="custName" placeholder="Full Name">
+<input type="tel" id="custPhone" placeholder="Mobile Number">
+<textarea id="custAddress" placeholder="Full Address"></textarea>
+<button class="add-btn" onclick="placeOrder()">Place Order</button>
+</div>
+</div>
+
+<div id="contactPage" class="section">
+<div style="padding:15px">
+<h3>Contact</h3>
+<p>Zenda Chowk Rd, Khajipura, Basmat, Maharashtra 431512</p>
+<p>Open till 10 PM</p><br>
+<a href="tel:08263024434"><button class="add-btn">Call Now</button></a><br><br>
+<a href="https://wa.me/918263024434"><button class="add-btn">WhatsApp</button></a><br><br>
+<iframe src="https://maps.google.com/maps?q=Zenda%20Chowk%20Rd,%20Basmat&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="200" style="border:0;border-radius:10px"></iframe>
+</div>
+</div>
+
+<div class="bottom-nav">
+<div onclick="showSection('home')"><i class="fa fa-home"></i>Home</div>
+<div onclick="showSection('categoryPage')"><i class="fa fa-th"></i>Categories</div>
+<div onclick="openCart()"><i class="fa fa-shopping-cart"></i>Cart</div>
+<div onclick="showSection('contactPage')"><i class="fa fa-phone"></i>Contact</div>
+</div>
+
+<script>
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+const products={shirts:[{id:1,name:"Formal Shirt",price:799,image:"images/shirt1.jpg",sale:true},{id:2,name:"Casual Shirt",price:699,image:"images/shirt2.jpg"}],pants:[{id:3,name:"Cotton Pant",price:999,image:"images/pant1.jpg"},{id:4,name:"Slim Fit Pant",price:1199,image:"images/pant2.jpg"}],tshirts:[{id:5,name:"Graphic T-Shirt",price:499,image:"images/tshirt1.jpg"},{id:6,name:"Plain T-Shirt",price:399,image:"images/tshirt2.jpg"}],jeans:[{id:7,name:"Blue Jeans",price:1299,image:"images/jeans1.jpg"},{id:8,name:"Black Jeans",price:1399,image:"images/jeans2.jpg"}]}
+let cart=JSON.parse(localStorage.getItem("cart"))||[]
+function updateCartCount(){document.getElementById("cartCount").innerText=cart.reduce((a,b)=>a+b.qty,0)}
+function saveCart(){localStorage.setItem("cart",JSON.stringify(cart));updateCartCount()}
+function openCategory(cat){showSection('categoryPage');const c=document.getElementById("productContainer");c.innerHTML="";products[cat].forEach(p=>{c.innerHTML+=`<div class="product-card">${p.sale?'<div class="badge">SALE</div>':''}<img src="${p.image}" loading="lazy"><div class="product-info"><h4>${p.name}</h4><p>₹${p.price}</p><button class="add-btn" onclick="addToCart(${p.id})">Add to Cart</button></div></div>`})}
+function addToCart(id){let product;Object.values(products).forEach(arr=>arr.forEach(p=>{if(p.id===id)product=p})) 
+let existing=cart.find(i=>i.id===id);if(existing){existing.qty++}else{cart.push({...product,qty:1})}saveCart();alert("Added to Cart")}
+function openCart(){showSection('cartPage');renderCart()}
+function renderCart(){const c=document.getElementById("cartItems");c.innerHTML="";let total=0;cart.forEach((item,index)=>{total+=item.price*item.qty;c.innerHTML+=`<div style="margin-bottom:10px"><b>${item.name}</b><br>₹${item.price} x ${item.qty}<div class="qty-control"><button onclick="changeQty(${index},-1)">-</button><button onclick="changeQty(${index},1)">+</button><button onclick="removeItem(${index})">Remove</button></div></div>`});document.getElementById("totalPrice").innerText="Total: ₹"+total}
+function changeQty(i,val){cart[i].qty+=val;if(cart[i].qty<=0)cart.splice(i,1);saveCart();renderCart()}
+function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
+function goToCheckout(){showSection('checkoutPage')}
+function placeOrder(){let name=document.getElementById("custName").value.trim();let phone=document.getElementById("custPhone").value.trim();let address=document.getElementById("custAddress").value.trim();if(!name||!phone||!address||cart.length==0){alert("Fill all details & add products");return}
+let total=0;let message="*WF Casual Store Order*%0A%0A";message+="Name: "+name+"%0APhone: "+phone+"%0AAddress: "+address+"%0A%0AProducts:%0A";cart.forEach(i=>{message+=i.name+" x"+i.qty+" = ₹"+(i.price*i.qty)+"%0A";total+=i.price*i.qty});message+="%0ATotal: ₹"+total;window.open("https://wa.me/918263024434?text="+message,"_blank")}
+updateCartCount()
+</script>
+</body>
+</html>
